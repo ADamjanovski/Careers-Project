@@ -1,0 +1,61 @@
+﻿@model PersonalProject.Models.Company
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<main class="rounded border ">
+    <div class="p-2">
+        <img src="~/Content/uploads/@Model.LogoURL"  style="width: 240px;">
+        <div class="d-flex justify-content-between">
+            <div>
+                <h3 class="align-self-lg-center " style="margin-top:2rem;">@Model.Name</h3>
+                <h6 class="">@Model.Address</h6>
+            </div>
+            <div style="margin-top:3rem;" class="d-flex">
+                @if (ViewBag.IsSameCompany != null && ViewBag.IsSameCompany)
+                {
+                   <p> @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "post-job btn mb-responsive" })</p>
+                }                
+            <p> @Html.ActionLink("Back to List", "Index", null, new { @class = "btn  post-job mb-responsive" })</p>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="p-2">
+        <h5>Description</h5>
+        <p>@Html.Raw(@Model.Description)</p>
+
+    </div>
+    <hr />
+    <div class="p-2">
+        <h5>Active Job Openings</h5>
+        <ul class="list-unstyled d-flex gap-4">
+            @{
+                foreach (var job in Model.jobAdvertisments)
+                {
+
+                    <li class=" rounded advertisment-border my-2" >
+                        <a href="@Url.Action("Details", "JobAdvertisments", new { id = job.Id })" class="d-block text-decoration-none text-dark">
+                            <div class="row">
+                                <div class="col-md-6 px-4 my-2">
+                                    <h4>@job.Title</h4>
+                                    <h6>@job.City</h6>
+                                </div>
+                                <div>
+                                    <h6 class="mx-2 small">Active Till: @job.ActiveTill.ToString("yyyy-MM-dd")</h6>
+
+                                </div>
+
+                            </div>
+                        </a>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+
+</main>
+<script>
+    
+</script>

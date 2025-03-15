@@ -1,0 +1,104 @@
+﻿@model PersonalProject.Models.Helpers.UserApplicationsViewModel
+@{
+    ViewBag.Title = "UserApplications";
+}
+
+<div id="applicationsDetails">
+    <div class="d-flex justify-content-between " style="margin-bottom:.5rem;">
+        <h5>Job Applications</h5>
+        <div class="form-group">
+            <label for="statusFilter">Filter status:</label>
+            <select id="statusFilter" class="form-control form-control-sm" style="width: auto; display: inline-block;">
+                <option value="" >Show All</option>
+                <option value="@PersonalProject.Models.JobApplication.Status.PENDING">Pending</option>
+                <option value="@PersonalProject.Models.JobApplication.Status.ACCEPTED">Accepted</option>
+                <option value="@PersonalProject.Models.JobApplication.Status.REJECTED">Rejected</option>
+            </select>
+        </div>
+
+    </div>
+    <div class="rounded advertisment-border  overflow-auto ">
+        @{ foreach (var application in Model.Applications)
+            {
+                <div class="d-flex justify-content-between m-3 my-1">
+                    <div class="">
+
+                        <p class="fw-bold p-0 m-0">Applicantion Title: @application.jobAdvertisment.Title</p>
+                        <p class="small p-0 m-0" style="font-size:x-small">Company: @application.jobAdvertisment.Company.Name</p>
+                        <p class="small" style="font-size:x-small">Salary: @application.jobAdvertisment.SalaryFrom - @application.jobAdvertisment.SalaryTo</p>
+                    </div>
+                    <div>
+                        
+                            @if (application.JobStatus == PersonalProject.Models.JobApplication.Status.PENDING)
+                            {
+                                <p class="text-warning m-2 text-center align-content-center">@application.JobStatus.ToString()</p>
+                            }
+                            else if (application.JobStatus == PersonalProject.Models.JobApplication.Status.ACCEPTED)
+                            {
+                                <p class="text-success m-2 text-center align-content-center">@application.JobStatus.ToString()</p>
+                            }
+                            else
+                            {
+                                <p class="text-danger m-2 text-center align-content-center">@application.JobStatus.ToString()</p>
+                            }
+                    </div>
+                </div>
+            }
+        }
+
+    </div>
+    <div class="pagination-div my-3">
+        <ul class="pagination">
+            @if (Model.PaginationInfo.HasPreviousPage)
+            {
+                <li class="page-item"><a href="#" class="page-link" style="color:#013479;" onclick="loadPage(@Model.PaginationInfo.CurrentPage - 1)">Previous</a></li>
+            }
+
+            @for (int i = 1; i <= Model.PaginationInfo.TotalPages; i++)
+            {
+                if (i == Model.PaginationInfo.CurrentPage)
+                {
+                    <li class="page-item"><span class="page-link" style="background-color: #013479;color:whitesmoke">@i</span></li>
+                }
+                else
+                {
+                    <li class="page-item"><a href="#" onclick="loadPage(@i)" class="page-link" style="color:#013479;">@i</a></li>
+                }
+            }
+
+            @if (Model.PaginationInfo.HasNextPage)
+            {
+                <li class="page-item"><a href="#" onclick="loadPage(@Model.PaginationInfo.CurrentPage + 1)" class=" page-link" style="color:#013479;">Next</a></li>
+            }
+        </ul>
+    </div>
+</div>
+
+<script>
+    function loadPage(page) {
+        var filter = $("#statusFilter").val();
+        console.log(filter)
+        $.ajax({
+            url: '@Url.Action("UserApplications", "JobApplications")',
+            data: { id: @Model.personId, page: page,filter : filter},
+            success: function (data) {
+                $('#applicationsDetails').html(data);
+            },
+            error: function () {
+                alert('Failed to load applications.');
+            }
+        });
+    }
+    $(document).ready(function () {
+        var savedFilter = localStorage.getItem("statusFilter");
+        if (savedFilter) {
+            $("#statusFilter").val(savedFilter); // Set the saved value in the dropdown
+        }
+        $("#statusFilter").change(function () {
+            var filter = $(this).val();
+            localStorage.setItem("statusFilter", filter);
+            loadPage(1); // Reload the first page with the selected filter
+        });
+    });
+</script>
+

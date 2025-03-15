@@ -1,0 +1,113 @@
+﻿@model  PersonalProject.Models.Helpers.AdvertisementApplicationsViewModel
+
+@{
+    ViewBag.Title = "_PartialJobApplicationsDetails";
+}
+
+
+<div id="applicationsDetails">
+    <hr />
+
+    <h4 class="m-3">Job Applications</h4>
+    <div>
+        @{ foreach (var application in Model.Applications)
+            {
+                <div class="d-flex justify-content-between m-3">
+                    @if (application is PersonalProject.Models.SignedUserApplication signedApplication)
+                    {
+                        <div class="py-2">
+                            <p>Applicant name: @signedApplication.Person.Name @signedApplication.Person.LastName</p>
+                        </div>
+                    }
+                    else if (application is PersonalProject.Models.UnsignedUserApplication unsignedApplication)
+                    {
+                        <div>
+                            <p>Applicant name: @unsignedApplication.Name</p>
+                        </div>
+                    }
+                    <div>
+                        <div class="d-flex justify-content-between">
+                            <a href="@Url.Action("DownloadCV", "JobApplications", new { fileName = application.CV })" class="btn post-job mx-2">
+                                Download CV
+                            </a>
+                            @if (application.JobStatus == PersonalProject.Models.JobApplication.Status.PENDING)
+                            {
+                                <button class="btn btn-success mx-2" onclick="changeStatus(@application.Id, 'ACCEPTED')">Accept</button>
+                                <button class="btn btn-danger" onclick="changeStatus(@application.Id, 'REJECTED')">Reject</button>
+                            }
+                            else if (application.JobStatus == PersonalProject.Models.JobApplication.Status.ACCEPTED)
+                            {
+                                <p class="text-success">@application.JobStatus.ToString()</p>
+                            }
+                            else
+                            {
+                                <p class="text-danger m-2">@application.JobStatus.ToString()</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+    </div>
+    <div class="pagination-div m-3">
+        <ul class="pagination">
+            @if (Model.PaginationInfo.HasPreviousPage)
+            {
+                <li class="page-item"><a href="#" class="page-link"style="color:#013479;" onclick="loadPage(@Model.PaginationInfo.CurrentPage - 1)">Previous</a></li>
+            }
+
+            @for (int i = 1; i <= Model.PaginationInfo.TotalPages; i++)
+            {
+                if (i == Model.PaginationInfo.CurrentPage)
+                {
+                     <li class="page-item"><span class="page-link" style="background-color: #013479;color:whitesmoke">@i</span></li>
+                }
+                else
+                {
+                     <li class="page-item"><a href="#" onclick="loadPage(@i)" class="page-link" style="color:#013479;">@i</a></li>
+                }
+            }
+
+            @if (Model.PaginationInfo.HasNextPage)
+            {
+                <li class="page-item"><a href="#" onclick="loadPage(@Model.PaginationInfo.CurrentPage + 1)" class=" page-link" style="color:#013479;">Next</a></li>
+            }
+        </ul>
+    </div>
+</div>
+
+<script>
+    function changeStatus(applicationId, status) {
+        $.ajax({
+            url: '@Url.Action("ChangeStatus", "JobApplications")',
+            type: 'POST',
+            data: { id: applicationId, status: status },
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message);
+                    location.reload(); // Reload the page to reflect the status change
+                } else {
+                    alert('Failed to update status: ' + response.message);
+                }
+            },
+            error: function () {
+                alert('An error occurred. Please try again.');
+            }
+        });
+    }
+</script>
+<script>
+    function loadPage(page) {
+        $.ajax({
+            url: '@Url.Action("ApplicantDetails", "JobAdvertisments")',
+            data: { id: @Model.AdvertismentId, page: page },
+            success: function (data) {
+                $('#applicationsDetails').html(data);
+            },
+            error: function () {
+                alert('Failed to load applications.');
+            }
+        });
+    }
+</script>

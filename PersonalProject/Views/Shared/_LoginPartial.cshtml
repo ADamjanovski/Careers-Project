@@ -1,0 +1,48 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+    @Html.AntiForgeryToken()
+    <ul class="navbar-nav navbar-right my-0 " style="padding-top:1rem">
+    <li class="p-0 btn rounded-1 " style="border-style: solid; border-color: black;">
+
+        @if (Session["UserRole"] != null && (string)Session["UserRole"] == "COMPANY")
+        {
+            <div class="d-flex align-content-center">
+                <a href="@Url.Action("Details", "Companies", new { id = (int?)Session["CustomUserId"] })" title="Manage" class="nav-link" >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                    </svg>
+                    <span >Account</span>
+                </a>
+            </div>
+        }
+        else if (Session["UserRole"] != null && (string)Session["UserRole"] == "USER")
+        {
+            <a href="@Url.Action("Index", "Manage")" title="Manage" class="nav-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                </svg>
+                <span style="margin-left:0.3rem;">Account</span>
+            </a>
+        }
+    </li>
+    <li><a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+    <li>@Html.ActionLink("Post a Job", "Create", "JobAdvertisments", routeValues: null, htmlAttributes: new { id = "loginLink", @class = " post-job rounded" })</li>
+
+</ul>
+    }
+}
+else
+{
+<ul class="navbar-nav navbar-right my-0 pt-1 " >
+    <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink", @class = "nav-link" })</li>
+    <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink", @class = "nav-link" })</li>
+    <li>@Html.ActionLink("Post a Job", "Create", "JobAdvertisments", routeValues: null, htmlAttributes: new { id = "loginLink", @class = " post-job rounded" })</li>
+</ul>
+}
+<script>
+    var text=(string)@Session["UserRole"];
+    console.log(text=="COMPANY")
+</script>

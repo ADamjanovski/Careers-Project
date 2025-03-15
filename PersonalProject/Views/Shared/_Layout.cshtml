@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <script src="https://cdn.ckeditor.com/4.21.0/standard/ckeditor.js"></script>
+    <link rel="stylesheet" href="~/Content/Site.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-toggleable-sm p-0 my-0 ">
+        <div class="container p-0 ">
+            <a href="@Url.Action("Index", "JobAdvertisments", new { area = "" })"class="mt-2 " >
+                <img src="~/Content/uploads/CareerTransparent4.svg" alt="Logo" class="w-100 h-25" >
+            </a>
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="mx-lg-1 collapse navbar-collapse d-md-inline-flex justify-content-between ">
+                <ul class="navbar-nav pt-1">
+                    <li>@Html.ActionLink("Home", "Index", "JobAdvertisments", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Companies", "Index", "Companies", new { area = "" }, new { @class = "nav-link" })</li>
+                </ul>
+                 @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </nav>
+    <hr/>
+    <div class="container body-content" style="margin-bottom:2rem;">
+        @RenderBody()
+
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,79 @@
+﻿@model PersonalProject.Models.IndexViewModel
+@{
+    ViewBag.Title = "Manage";
+}
+
+<main aria-labelledby="title">
+    
+
+    <p class="text-success">@ViewBag.StatusMessage</p>
+    <div class="rounded advertisment-border  overflow-auto " style="height:65%;">
+        <div class="d-flex justify-content-between m-3">
+            <h4 class="">Account Information</h4>
+            <div class="">
+                @Html.ActionLink("Edit", "PersonEdit", new { id = Model.Person.CustomUser.Id }, new { @class = "post-job btn" })
+            </div>
+        </div>
+        <hr />
+        <div class="m-3">
+            <h5>
+                Name
+            </h5>
+            @{
+                if (Model.Person.CustomUser is PersonalProject.Models.Person person)
+                {
+                    <p>@person.Name @person.LastName</p>
+                }
+            }
+        </div>
+        <hr />
+        <div class="m-3">
+
+            <h5>
+                Email
+            </h5>
+            <p>@Model.Person.Email</p>
+        </div>
+
+        <hr />
+        <div class="m-3">
+            <h5>Phone Number</h5>
+            <p>@Model.Person.PhoneNumber</p>
+        </div>
+        <hr />
+        <div class="m-3">
+            <h5>Address</h5>
+            <p>@Model.Person.CustomUser.Address</p>
+        </div>
+        <hr/>
+        <div class="m-3">
+            @Html.Action("UserApplications", "JobApplications", new { id = Model.Person.CustomUser.Id })
+
+        </div>
+
+    </div>
+</main>
+
+<script>
+    $(document).ready(function () {
+        //id=@Model.Person.CustomUser.Id
+        //loadApplicantDetails(@Model.Person.CustomUser.Id)
+        console.log("here document ready");
+    })
+
+    function loadApplicantDetails(jobId) {
+        var url = '@Url.Action("UserApplications", "JobApplications")';
+        console.log("Here")
+        $.ajax({
+            url: url,
+            data: { id: jobId },
+            success: function (data) {
+                $('#applicantionDetails').html(data);
+            },
+            error: function () {
+                alert('Failed to load applicant details.');
+            }
+        });
+    }
+
+</script>

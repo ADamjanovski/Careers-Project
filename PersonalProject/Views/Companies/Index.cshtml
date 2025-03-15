@@ -1,0 +1,26 @@
+﻿@model IEnumerable<PersonalProject.Models.Company>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Companies</h2>
+<div>
+
+    <ul class="text-decoration-none list-unstyled d-flex gap-3 flex-wrap">
+        @foreach (var item in Model)
+        {
+            <li class=" rounded advertisment-border ">
+                <a href="@Url.Action("Details", "Companies", new { id = item.Id })" class="d-block text-decoration-none text-dark my-3  px-4 text-dark">
+                    <div class="d-flex flex-row">
+                        <img src="~/Content/uploads/@item.LogoURL" style="width:130px"/>
+                        <div class="my-2 px-3 align-self-lg-end">
+                            <h4>@item.Name</h4>
+                            <h6>@item.Address</h6>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        }
+    </ul>
+</div>

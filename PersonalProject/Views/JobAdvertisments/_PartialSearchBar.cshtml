@@ -1,0 +1,149 @@
+﻿@using PersonalProject.Models
+@model PersonalProject.Models.SearchBar
+
+
+<div class="">
+    @using (Html.BeginForm("Index", "JobAdvertisments", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class=" d-flex  rounded p-2 advertisment-border" style="padding-right:0;">
+            <span class="input-group-text border-0 bg-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                </svg>
+            </span>
+            <div class="form-group " style="margin-right:1rem;">
+                @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control  border-0 mt-1", placeholder = "Title" } })
+            </div>
+            <div class="d-flex">
+                <span class="input-group-text border-0 bg-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pin" viewBox="0 0 16 16">
+                        <path d="M4.146.146A.5.5 0 0 1 4.5 0h7a.5.5 0 0 1 .5.5c0 .68-.342 1.174-.646 1.479-.126.125-.25.224-.354.298v4.431l.078.048c.203.127.476.314.751.555C12.36 7.775 13 8.527 13 9.5a.5.5 0 0 1-.5.5h-4v4.5c0 .276-.224 1.5-.5 1.5s-.5-1.224-.5-1.5V10h-4a.5.5 0 0 1-.5-.5c0-.973.64-1.725 1.17-2.189A6 6 0 0 1 5 6.708V2.277a3 3 0 0 1-.354-.298C4.342 1.674 4 1.179 4 .5a.5.5 0 0 1 .146-.354m1.58 1.408-.002-.001zm-.002-.001.002.001A.5.5 0 0 1 6 2v5a.5.5 0 0 1-.276.447h-.002l-.012.007-.054.03a5 5 0 0 0-.827.58c-.318.278-.585.596-.725.936h7.792c-.14-.34-.407-.658-.725-.936a5 5 0 0 0-.881-.61l-.012-.006h-.002A.5.5 0 0 1 10 7V2a.5.5 0 0 1 .295-.458 1.8 1.8 0 0 0 .351-.271c.08-.08.155-.17.214-.271H5.14q.091.15.214.271a1.8 1.8 0 0 0 .37.282" />
+                    </svg>
+                </span>
+
+                <div class="form-group">
+                    @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control border-0 mt-1", placeholder = "City" } })
+                </div>
+            </div>
+            <div class="">
+                <div class=" ">
+                    <input type="submit" value="Search" class="btn btn-default post-job" />
+                </div>
+            </div>
+        </div>
+        @Html.HiddenFor(m => m.SalaryFrom)
+
+        <div class="d-flex flex-wrap gap-2 my-3 justify-content-center" style="">
+            <div class="form-group">
+                    @Html.DropDownListFor(model => model.Type,
+                        new SelectList(Enum.GetValues(typeof(PersonalProject.Models.JobEnums.JobTypes))), 
+                        "Job Type",new { @class = "form-control text-center" })
+                    @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger dropdown-item" })
+            </div>
+
+            <!-- Job Condition Dropdown -->
+            <div class="form-group">
+                <div class="">
+                    @Html.DropDownListFor(model => model.Condition,
+                        new SelectList(Enum.GetValues(typeof(PersonalProject.Models.JobEnums.JobCondition))),
+                        "Work Setting", new { @class = "form-control text-center" })
+                    @Html.ValidationMessageFor(model => model.Condition, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <!-- Button to Trigger Category Modal -->
+            <div class="form-group">
+                <button type="button" class="btn advertisment-border " data-toggle="modal" data-target="#companyModal">
+                    Companies
+                </button>
+
+                <!-- Modal for Companies -->
+                <div class="modal fade" id="companyModal" tabindex="-1" role="dialog" aria-labelledby="companyModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="companyModalLabel">Select Companies</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                @foreach (var company in Model.Company)
+                                {
+                                    <div class="form-check">
+                                        <!-- Manually render the checkbox and determine if it should be checked -->
+                                        <input type="checkbox"
+                                               class="form-check-input"
+                                               id="company_@company.Id"
+                                               name="CompanyIds"
+                                               value="@company.Id"
+                                               @(Model.CompanyIds.Contains(company.Id) ? "checked" : "") />
+                                        <label class="form-check-label" for="company_@company.Id">@company.Name</label>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <!-- Button to Trigger Category Modal -->
+                <button type="button" class="btn advertisment-border" data-toggle="modal" data-target="#categoryModal">
+                    Categories
+                </button>
+                <!-- Modal for Categories -->
+                <div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="categoryModalLabel">Select Categories</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                @foreach (var category in Model.Category)
+                                {
+                                    <div class="form-check">
+                                        <!-- Manually render the checkbox and determine if it should be checked -->
+                                        <input type="checkbox"
+                                               class="form-check-input"
+                                               id="category_@category.Name"
+                                               name="CategoryIds"
+                                               value="@category.Name"
+                                               @(Model.CategoryIds.Contains(category.Name) ? "checked" : "") />
+                                        <label class="form-check-label" for="category_@category.Name">@category.Name</label>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="">
+                    <select id="jobTypeDropdown" name="ChosenSalary" class="form-control text-center">
+                        <option value="" selected disabled class="">Salary</option>
+                        <option value="0" class="">Show All</option>
+                        @for (int i = Model.SalaryFrom; i < Model.SalaryTo; i += 10000)
+                        {
+                            if (i != 0)
+                            {
+                                <option value="@i">@i+ </option>
+
+                            }
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(model => model.ChosenSalary, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,134 @@
+﻿@model PersonalProject.Models.JobAdvertisment
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<div>
+    <div class="d-flex justify-content-between ">
+        <h2>Open Position: @Model.Title</h2>        
+        <hr />
+        <p>
+            @if (ViewBag.IsSameCompany != null && ViewBag.IsSameCompany)
+            {
+                @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "post-job btn" })
+            }
+            @Html.ActionLink("Back to List", "Index", null, new { @class = "post-job btn" })
+        </p>
+    </div>
+    <div>
+        <div class=" rounded advertisment-border  overflow-auto  " style="height:65%;">
+            <div class="m-3">
+                <h6>@Html.ActionLink(Model.Company.Name, "Details", "Companies", new { id = Model.Company.Id }, null)</h6>
+                <h6>@Model.City</h6>
+                <h6>@Model.SalaryFrom - @Model.SalaryTo per year</h6>
+                @{
+                    if (!@ViewBag.isAuthenticated || (@ViewBag.Role == "USER" && (@ViewBag.Applied == null || ViewBag.Applied != true)))
+                    {
+                        <input onclick="scrollToFormDetails()" value="Apply" class="btn btn-sm   " style="background-color: #013479;color:white; width: 5rem" />
+
+                    }
+                }
+            </div>
+
+
+            <hr />
+            <div class="m-3">
+                <h4>Job details</h4>
+                <div class="d-flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" style="width:20px;"><path d="M64 64C28.7 64 0 92.7 0 128L0 384c0 35.3 28.7 64 64 64l448 0c35.3 0 64-28.7 64-64l0-256c0-35.3-28.7-64-64-64L64 64zm64 320l-64 0 0-64c35.3 0 64 28.7 64 64zM64 192l0-64 64 0c0 35.3-28.7 64-64 64zM448 384c0-35.3 28.7-64 64-64l0 64-64 0zm64-192c-35.3 0-64-28.7-64-64l64 0 0 64zM288 160a96 96 0 1 1 0 192 96 96 0 1 1 0-192z" /></svg>
+                    <h6 class="mx-2 pt-2">Pay</h6>
+                </div>
+                <p>@Model.SalaryFrom - @Model.SalaryTo per year</p>
+
+                <h6>Work setting</h6>
+                <p>@Model.Condition</p>
+                <h6>Position type</h6>
+                <p>@Model.Type</p>
+            </div>
+            <hr />
+            <div class="m-3">
+                <h4>Job description</h4>
+                <p>@Html.Raw(@Model.Description)</p>
+            </div>
+            @if (!ViewBag.isAuthenticated || (ViewBag.Role != null && ViewBag.Role == "USER"))
+            {
+                <div id="formDetails">
+                    @{
+                        if (ViewBag.Applied != null && ViewBag.Applied)
+                        {
+                            <hr />
+                            <h4 class=" m-3 ">Application Details</h4>
+                            <div class="m-3"><p>You have already applied to this job advertisment.</p></div>
+                        }
+                    }
+                </div>
+            }
+
+            @if (ViewBag.IsSameCompany != null && ViewBag.IsSameCompany)
+            {
+                @Html.Action("ApplicantDetails","JobAdvertisments", new { id = Model.Id })
+            }
+        </div>
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var isSameCompany = '@ViewBag.isAuthenticated'.toLowerCase() === 'true';
+        console.log(isSameCompany);
+        if (isSameCompany!=null && isSameCompany) {
+    //        loadApplicantDetails(@Model.Id)
+        }
+        loadForm(@Model.Id)
+        console.log("here document ready");
+    })
+    function loadForm(jobId) {
+
+        var isAuthenticated = '@ViewBag.isAuthenticated'.toLowerCase() === 'true';
+        var url = '@Url.Action("PartialJobAppUnSigned", "JobApplications")'; // Static part of the URL, this can be any controller or action that's common.
+        if (isAuthenticated) {
+            url='@Url.Action("PartialJobApplicationSigned", "JobApplications")'
+        }
+        var applied = '@ViewBag.Applied'.toLowerCase() === 'true';
+        if (!applied) {
+            $.ajax({
+                url: url,
+                data: { id: jobId },
+                success: function (data) {
+                    $('#formDetails').html(data);
+                },
+                error: function () {
+                    alert('Failed to load job details.');
+                }
+            });
+        }
+
+    }
+    function loadApplicantDetails(jobId) {
+        var url = '@Url.Action("ApplicantDetails", "JobAdvertisments")';
+        console.log("Here")
+        $.ajax({
+            url: url,
+            data: { id: jobId },
+            success: function (data) {
+                console.log(data)
+                $('#applicantDetails').html(data);
+            },
+            error: function () {
+                alert('Failed to load applicant details.');
+            }
+        });
+    }
+    function scrollToFormDetails() {
+        // Find the element you want to scroll to
+        const targetElement = document.getElementById('formDetails');
+
+        // Scroll to the element
+        targetElement.scrollIntoView({
+            behavior: 'smooth',  // Smooth scrolling
+            block: 'start'       // Scroll to the top of the element
+        });
+    }
+</script>

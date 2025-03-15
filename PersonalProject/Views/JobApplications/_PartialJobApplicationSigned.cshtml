@@ -1,0 +1,59 @@
+﻿@model PersonalProject.Models.SignedApplicationViewModel
+
+
+@using (Html.BeginForm("PartialJobApplicationSigned", "JobApplications", FormMethod.Post,new { @enctype= "multipart/form-data", id = "applicationForm", onsubmit = "return submitApplicationForm();" }))
+{
+    @Html.AntiForgeryToken()
+    
+<div class="form-horizontal">
+    <h4 class=" m-3">Application Details</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+<div class="form-group  m-3">
+    @Html.LabelFor(model => model.CV, htmlAttributes: new { @class = "control-label col-md-2" })
+    <div class="col-md-10">
+        @Html.TextBoxFor(m => m.CV, new { type = "file", @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.CV, "", new { @class = "text-danger" })
+    </div>
+
+</div>
+    @Html.HiddenFor(model => model.UserId)
+    @Html.HiddenFor(model => model.JobAdvertismentId)
+
+    <div class="form-group m-3">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Apply" class="btn btn-default border rounded border-secondary" />
+        </div>
+    </div>
+</div>
+}
+<script>
+    function submitApplicationForm() {
+        const form = $('#applicationForm');
+        const formData = new FormData(form[0]);
+
+        $.ajax({
+            url: form.attr('action'),
+            type: form.attr('method'),
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.success) {
+                    console.log("success on form")
+                    alert('Application submitted successfully!');
+                    $('#formDetails').html(''); // Clear form details on success
+                } else {
+                    $('#formDetails').html(data.html);
+                }
+            },
+            error: function () {
+                alert('An error occurred. Please try again.');
+            }
+        });
+
+        return false; // Prevent default form submission
+    }</script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

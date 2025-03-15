@@ -1,0 +1,27 @@
+﻿<div class="pagination-div ">
+    <ul class="pagination">
+        @if (Model.PaginationInfo.HasPreviousPage)
+        {
+            <li class="page-item"><a href="@Url.Action("Index", new { page = Model.PaginationInfo.CurrentPage - 1 })" style="color: #013479" class="page-link">Previous</a></li>
+        }
+
+        @for (int i = 1; i <= Model.PaginationInfo.TotalPages; i++)
+        {
+            if (i == Model.PaginationInfo.CurrentPage)
+            {
+                <li class="page-item"><a disabled class="page-link " style="background-color: #013479;color:whitesmoke ">@i</a></li>
+            }
+            else
+            {
+                <li class="page-item"><a href="@Url.Action("Index", new { page = i })" class="page-link" style="color: #013479">@i</a></li>
+            }
+        }
+
+        @if (Model.PaginationInfo.HasNextPage)
+        {
+            <li class="page-item"><a href="@Url.Action("Index", new { page = Model.PaginationInfo.CurrentPage + 1 })" style="color: #013479" class="page-link">Next</a></li>
+        }
+    </ul>
+</div>
+
+
